@@ -6,6 +6,7 @@ from .base import BaseCommand, full_options
 
 class PublishCommand(BaseCommand):
     command = "publish"
+    description = "Publish an app."
 
     @property
     def publication_channels(self):

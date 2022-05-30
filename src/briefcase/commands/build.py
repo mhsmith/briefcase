@@ -7,6 +7,7 @@ from .base import BaseCommand, full_options
 
 class BuildCommand(BaseCommand):
     command = "build"
+    description = "Build an app."
 
     def add_options(self, parser):
         parser.add_argument(

@@ -2,6 +2,7 @@ import argparse
 import sys
 from pathlib import Path
 
+import briefcase.commands
 from briefcase import __version__
 from briefcase.commands import DevCommand, NewCommand, UpgradeCommand
 from briefcase.platforms import get_output_formats, get_platforms
@@ -15,14 +16,31 @@ from .exceptions import (
 
 
 def parse_cmdline(args):
+    description = ["commands:"]
+    commands = [
+        # Non-platform-specific.
+        "new",
+        "dev",
+        "upgrade",
+        # Platform-specific.
+        "create",
+        "update",
+        "build",
+        "run",
+        "package",
+        "publish",
+    ]
+    name_width = max(len(name) for name in commands)
+    for name in commands:
+        cls = getattr(briefcase.commands, name.capitalize() + "Command")
+        description.append(f"  {name:{name_width}}  {cls.description}")
+
     parser = argparse.ArgumentParser(
         prog="briefcase",
-        description="Package Python code for distribution.",
-        usage="briefcase [-h] <command> [<platform>] [<format>] ...",
-        epilog=(
-            "Each command, platform and format has additional options. "
-            "Use the -h option on a specific command for more details."
-        ),
+        description="\n".join(description),
+        usage="briefcase [-h] <command> ...",
+        epilog="Use the -h option on a specific command for more details.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
         add_help=False,
     )
     parser.add_argument(
@@ -41,20 +59,10 @@ def parse_cmdline(args):
     # usage string so that the instructions displayed are correct
     parser.add_argument(
         "command",
-        choices=[
-            "new",
-            "dev",
-            "upgrade",
-            "create",
-            "update",
-            "build",
-            "run",
-            "package",
-            "publish",
-        ],
+        choices=commands,
         metavar="command",
         nargs="?",
-        help="the command to execute (one of: %(choices)s)",
+        help=argparse.SUPPRESS,
     )
 
     # <platform> *is* optional, with the default value based on the platform
@@ -75,7 +83,7 @@ def parse_cmdline(args):
 
     # If no command has been provided, display top-level help.
     if options.command is None:
-        raise NoCommandError(parser.format_help())
+        raise NoCommandError(parser.format_help().strip())
     elif options.command == "new":
         command = NewCommand(base_path=Path.cwd())
         options = command.parse_options(extra=extra)

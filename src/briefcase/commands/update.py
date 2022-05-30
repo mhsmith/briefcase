@@ -8,6 +8,7 @@ from .create import CreateCommand
 
 class UpdateCommand(CreateCommand):
     command = "update"
+    description = "Update an existing app."
 
     def add_options(self, parser):
         parser.add_argument(

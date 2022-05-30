@@ -9,6 +9,7 @@ from .base import BaseCommand, full_options
 
 class RunCommand(BaseCommand):
     command = "run"
+    description = "Run an app."
 
     def add_options(self, parser):
         parser.add_argument("-a", "--app", dest="appname", help="The app to run")

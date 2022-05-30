@@ -117,6 +117,7 @@ def write_dist_info(app: BaseConfig, dist_info_path: Path):
 
 class CreateCommand(BaseCommand):
     command = "create"
+    description = "Create an app."
 
     def __init__(self, *args, **options):
         super().__init__(*args, **options)

@@ -15,33 +15,34 @@ from briefcase.platforms.linux.appimage import LinuxAppImageCreateCommand
 from briefcase.platforms.macOS.app import macOSAppCreateCommand, macOSAppPublishCommand
 from briefcase.platforms.windows.msi import WindowsMSICreateCommand
 
+top_level_help = (
+    "usage: briefcase [-h] <command> ...\n"
+    "\n"
+    "commands:\n"
+    "  new      Create a new briefcase project.\n"
+    "  dev      Run a briefcase project in the dev environment.\n"
+    "  upgrade  Upgrade briefcase-managed tools.\n"
+    "  create   Create an app.\n"
+    "  update   Update an existing app.\n"
+    "  build    Build an app.\n"
+    "  run      Run an app.\n"
+    "  package  Package an app for distribution.\n"
+    "  publish  Publish an app.\n"
+)
+
 
 def test_empty():
     """``briefcase`` returns basic usage."""
     with pytest.raises(NoCommandError) as excinfo:
         parse_cmdline("".split())
-
-    assert excinfo.value.msg.startswith(
-        "usage: briefcase [-h] <command> [<platform>] [<format>] ...\n"
-        "\n"
-        "Package Python code for distribution.\n"
-        "\n"
-        "positional arguments:\n"
-    )
+    assert excinfo.value.msg.startswith(top_level_help)
 
 
 def test_help_only():
     """``briefcase -h`` returns basic usage."""
     with pytest.raises(NoCommandError) as excinfo:
         parse_cmdline("-h".split())
-
-    assert excinfo.value.msg.startswith(
-        "usage: briefcase [-h] <command> [<platform>] [<format>] ...\n"
-        "\n"
-        "Package Python code for distribution.\n"
-        "\n"
-        "positional arguments:\n"
-    )
+    assert excinfo.value.msg.startswith(top_level_help)
 
 
 def test_version_only(capsys):
@@ -60,14 +61,7 @@ def test_show_output_formats_only():
     """``briefcase -f`` returns basic usage as a command is needed."""
     with pytest.raises(NoCommandError) as excinfo:
         parse_cmdline("-f".split())
-
-    assert excinfo.value.msg.startswith(
-        "usage: briefcase [-h] <command> [<platform>] [<format>] ...\n"
-        "\n"
-        "Package Python code for distribution.\n"
-        "\n"
-        "positional arguments:\n"
-    )
+    assert excinfo.value.msg.startswith(top_level_help)
 
 
 def test_unknown_command():
